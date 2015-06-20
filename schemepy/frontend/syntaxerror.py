@@ -1,0 +1,2 @@
+class SchemeSyntaxError(SyntaxError):
+    pass
