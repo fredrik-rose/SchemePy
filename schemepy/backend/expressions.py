@@ -80,9 +80,10 @@ class If(Expression):
     def evaluate(self, env):
         predicate = evaluate.evaluate(self.__predicate, env)
         if not isinstance(predicate, basictypes.Boolean) or predicate.value:
-            return evaluate.evaluate(self.__consequent, env)
+            continuation = self.__consequent
         else:
-            return evaluate.evaluate(self.__alternative, env) if self.__alternative else basictypes.Boolean(False)
+            continuation = self.__alternative
+        return evaluate.tail_call_evaluate(continuation, env) if continuation else basictypes.Boolean(False)
 
 
 class Lambda(Expression):
