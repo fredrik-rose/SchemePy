@@ -21,7 +21,7 @@ def repl():
             continue
         logging.debug("Expression: %s", exp)
         try:
-            evaluated_exp = evaluate.evaluate(exp, env)
+            evaluated_exp = evaluate.force_evaluate(exp, env)
         except environment.EnvError as error:
             print(error)
             continue

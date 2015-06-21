@@ -78,7 +78,7 @@ class If(Expression):
         return "<If {} {} {}>".format(self.__predicate, self.__consequent, self.__alternative)
 
     def evaluate(self, env):
-        predicate = evaluate.evaluate(self.__predicate, env)
+        predicate = evaluate.force_evaluate(self.__predicate, env)
         if not isinstance(predicate, basictypes.Boolean) or predicate.value:
             continuation = self.__consequent
         else:
@@ -92,7 +92,7 @@ class Lambda(Expression):
         self.__body = body  # TODO: Handle internal definitions?
 
     def __str__(self):
-        return "<Lambda {} {{body}}>".format(self.__parameters)
+        return "<Lambda {} {{body}}>".format([str(p) for p in self.__parameters])
 
     def evaluate(self, env):
         return procedures.Compound(self.__parameters, self.__body, env)
@@ -118,4 +118,4 @@ class Application(Expression):
         return "<Application {} {}>".format(self.__operator, [str(o) for o in self.__operands])
 
     def evaluate(self, env):
-        return apply.apply(evaluate.evaluate(self.__operator, env), [evaluate.evaluate(o, env) for o in self.__operands])
+        return apply.apply(evaluate.force_evaluate(self.__operator, env), self.__operands, env)

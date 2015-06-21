@@ -1,4 +1,4 @@
-from schemepy.backend import basictypes, expressions
+from schemepy.backend import basictypes, expressions, procedures
 from schemepy.frontend import syntaxerror
 
 
@@ -147,11 +147,37 @@ def _analyze_lambda(exp):
     def lambda_body():
         return exp[1:]
 
+    def parameter_identifier(param):
+        return param[0]
+
+    def parameter_type(param):
+        return param[1]
+
+    def analyze_parameter(param):
+        strict = 's'
+        lazy = 'l'
+        lazy_memo = 'm'
+        types = {
+            strict: procedures.Strict,
+            lazy: procedures.Lazy,
+            lazy_memo: procedures.LazyMemo,
+        }
+        if not isinstance(param, list):
+            param = [param, strict]
+        if len(param) != 2:
+            raise syntaxerror.SchemeSyntaxError("lambda: Error in parameter declaration.")
+        if not _is_identifier(parameter_identifier(param)):
+            raise syntaxerror.SchemeSyntaxError("lambda: Parameter is not an identifier.")
+        try:
+            return types[parameter_type(param)](parameter_identifier(param))
+        except KeyError:
+            raise syntaxerror.SchemeSyntaxError("lambda: Unknown parameter type.")
+
     if len(exp) < 2:
         raise syntaxerror.SchemeSyntaxError("lambda: At least 2 parts expected, {} is given.".format(len(exp)))
-    if (not isinstance(lambda_parameters(), list)) or any([not _is_identifier(p) for p in lambda_parameters()]):
+    if not isinstance(lambda_parameters(), list):
         raise syntaxerror.SchemeSyntaxError("lambda: Error in parameter declaration.")
-    return expressions.Lambda(lambda_parameters(), [analyze(e) for e in lambda_body()])
+    return expressions.Lambda([analyze_parameter(p) for p in lambda_parameters()], [analyze(e) for e in lambda_body()])
 
 
 def _analyze_begin(exp):
