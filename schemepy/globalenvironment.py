@@ -25,5 +25,7 @@ def create():
         'list': primitives.make_list,
         'append': primitives.append,
         'display': primitives.display,
+        'eval': primitives.eval_primitive,
+        'apply': primitives.apply_primitive,
         })
     return env

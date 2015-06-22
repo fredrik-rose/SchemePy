@@ -53,7 +53,8 @@ class Primitive(Procedure):
         return "<Primitive procedure>"
 
     def apply(self, arguments, env):
-        return self.__function([evaluate.force_evaluate(a, env) for a in arguments])
+        return self.__function([evaluate.force_evaluate(a, env) for a in arguments], env)
+
 
 class Compound(Procedure):
     def __init__(self, parameters, body, env):

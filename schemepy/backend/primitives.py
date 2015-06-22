@@ -1,4 +1,5 @@
 import functools
+import inspect
 import operator
 from schemepy.backend import procedures, basictypes
 
@@ -6,6 +7,19 @@ from schemepy.backend import procedures, basictypes
 TRUE = basictypes.Boolean(True)
 FALSE = basictypes.Boolean(False)
 NULL = basictypes.List([])
+
+
+def _primitive(func):
+    def argument_checker(args, env):
+        num_of_args = len(inspect.getargspec(func).args)
+        if num_of_args == 1:
+            return func(args)
+        elif num_of_args == 2:
+            return func(args, env)
+        else:
+            raise TypeError("Primitive function not supported")
+
+    return procedures.Primitive(argument_checker)
 
 
 def _converter(func):
@@ -33,25 +47,25 @@ def _converter(func):
     return convert
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def add(operands):
     return functools.reduce(operator.add, operands, 0)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def sub(operands):
     return -operands[0] if len(operands) == 1 else functools.reduce(operator.sub, operands)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def mul(operands):
     return functools.reduce(operator.mul, operands, 1)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def div(operands):
     return 1 / operands[0] if len(operands) == 1 else functools.reduce(operator.truediv, operands)
@@ -61,48 +75,48 @@ def _cmp(operands, func):
     return all(func(operands[i], operands[i + 1]) for i in range(len(operands) - 1))
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def less(operands):
     return _cmp(operands, operator.lt)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def less_or_equal(operands):
     return _cmp(operands, operator.le)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def equal(operands):
     return _cmp(operands, operator.eq)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def not_equal(operands):
     return _cmp(operands, operator.ne)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def greater_or_equal(operands):
     return _cmp(operands, operator.ge)
 
 
-@procedures.Primitive
+@_primitive
 @_converter
 def greater(operands):
     return _cmp(operands, operator.gt)
 
 
-@procedures.Primitive
+@_primitive
 def is_null(args):
     return basictypes.Boolean(isinstance(args[0], basictypes.List) and len(args[0].value) == 0)
 
 
-@procedures.Primitive
+@_primitive
 def cons(args):
     if isinstance(args[1], basictypes.List):
         return basictypes.List([args[0]] + args[1])
@@ -110,7 +124,7 @@ def cons(args):
         return basictypes.Pair(args[0], args[1])
 
 
-@procedures.Primitive
+@_primitive
 def car(args):
     if isinstance(args[0], basictypes.Pair):
         return args[0].car
@@ -118,7 +132,7 @@ def car(args):
         return args[0][0]
 
 
-@procedures.Primitive
+@_primitive
 def cdr(args):
     if isinstance(args[0], basictypes.Pair):
         return args[0].cdr
@@ -126,17 +140,35 @@ def cdr(args):
         return basictypes.List(args[0][1:])
 
 
-@procedures.Primitive
+@_primitive
 def make_list(args):
     return basictypes.List(args)
 
 
-@procedures.Primitive
+@_primitive
 def append(args):
     return basictypes.List(args[0] + args[1])
 
 
-@procedures.Primitive
+@_primitive
 def display(args):  # This is a hack
     from schemepy.frontend import inout
     print(inout.disp(args[0]))
+
+
+@_primitive
+def eval_primitive(args, env):  # This is a hack
+    def gen():
+        yield inout.disp(args[0])
+
+    from schemepy.frontend import inout
+    from schemepy.evalapply import evaluate
+    exp = inout.read(gen())()
+    return evaluate.evaluate(exp, env)
+
+
+@_primitive
+def apply_primitive(args, env):  # This is a hack
+    from schemepy.evalapply import apply
+    from schemepy.backend import expressions
+    return apply.apply(args[0], [expressions.SelfEvaluating(a) for a in args[1]], env)
