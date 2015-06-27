@@ -1,3 +1,6 @@
+"""
+Read-eval-print loop.
+"""
 import logging
 import sys
 from schemepy.evalapply import evaluate, apply
@@ -6,7 +9,13 @@ from schemepy import environment, globalenvironment
 
 
 def repl():
+    """
+    Read-eval-print loop.
+    """
     def get_input():
+        """
+        Input generator.
+        """
         while True:
             yield input("> ")
 

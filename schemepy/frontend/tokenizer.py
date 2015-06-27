@@ -1,8 +1,14 @@
+"""
+Scheme tokenizer, reads tokens from a stream and creates Scheme expressions.
+"""
 import re
 from schemepy.frontend import syntaxerror
 
 
 def _tokgen(regexp, stream):
+    """
+    Generates tokens from a stream.
+    """
     text = ""
     while True:
         if not text:
@@ -16,6 +22,9 @@ def _tokgen(regexp, stream):
 
 
 class Tokenizer:
+    """
+    Scheme tokenizer.
+    """
     __regexp = r'''\s*(,@|[('`,)]|"(?:[\\].|[^\\"])*"|;.*|[^\s('"`,;)]*)(.*)'''
     __quotes = {
         "'": "quote",
@@ -28,7 +37,13 @@ class Tokenizer:
         self.__token_stream = _tokgen(Tokenizer.__regexp, stream)
 
     def tokenize(self):
+        """
+        Get the next expression.
+        """
         def next_token():
+            """
+            Get next token.
+            """
             token = next(self.__token_stream)
             try:
                 raise token
@@ -36,6 +51,9 @@ class Tokenizer:
                 return token
 
         def read_token(token=None):
+            """
+            Handle a token.
+            """
             if token is None:
                 token = next_token()
             if token.startswith(";"):
@@ -50,6 +68,9 @@ class Tokenizer:
                 return token
 
         def read_list():
+            """
+            Handle list tokens.
+            """
             tokens = []
             while True:
                 token = next_token()

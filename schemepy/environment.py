@@ -1,8 +1,17 @@
+"""
+Environment.
+"""
 class EnvError(Exception):
+    """
+    Environment exception.
+    """
     pass
 
 
 class Environment:
+    """
+    Environment.
+    """
     def __init__(self, identifiers=(), values=(), outer=None):
         if not len(identifiers) == len(values):
             raise EnvError("The number of identifiers ({}) do not match the number of values ({})."
@@ -36,7 +45,13 @@ class Environment:
         return border + header + border + rows + border + outer_frame
 
     def update(self, bindings):
+        """
+        Updates the environment with new bindings.
+        """
         self.__symbol_table.update(bindings)
 
     def extend(self, identifiers=(), values=()):
+        """
+        Creates a new environment frame.
+        """
         return Environment(identifiers, values, self)

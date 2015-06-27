@@ -1,4 +1,10 @@
+"""
+Thunks, delayed function calls.
+"""
 class Thunk:
+    """
+    Thunk.
+    """
     def __init__(self, func, *args, **kwargs):
         self._call = lambda: func(*args, **kwargs)
 
@@ -7,6 +13,9 @@ class Thunk:
 
 
 class ThunkMemo(Thunk):
+    """
+    Thunk with memoization.
+    """
     def __init__(self, func, *args, **kwargs):
         self.__evaluated = False
         self.__memo = None
@@ -21,6 +30,9 @@ class ThunkMemo(Thunk):
 
 
 def unpack(obj):
+    """
+    Performs the function call of thunks until a non-thunk object is reached.
+    """
     while isinstance(obj, Thunk):
         obj = obj()
     return obj

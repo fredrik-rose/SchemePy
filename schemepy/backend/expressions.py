@@ -1,15 +1,27 @@
+"""
+The basic expressions of the language.
+"""
 import abc
 from schemepy.evalapply import evaluate, apply
 from schemepy.backend import procedures, basictypes
 
 
 class Expression(metaclass=abc.ABCMeta):
+    """"
+    Expression abstract base class.
+    """
     @abc.abstractmethod
     def evaluate(self, env):
+        """
+        Evaluates the expression in an environment.
+        """
         pass
 
 
 class SelfEvaluating(Expression):
+    """"
+    Self evaluating expression.
+    """
     def __init__(self, value):
         self.__value = value
 
@@ -21,6 +33,9 @@ class SelfEvaluating(Expression):
 
 
 class Identifier(Expression):
+    """"
+    Identifier expression.
+    """
     def __init__(self, identifier):
         self.__identifier = identifier
 
@@ -32,6 +47,9 @@ class Identifier(Expression):
 
 
 class Quote(Expression):
+    """"
+    Quote expression.
+    """
     def __init__(self, quotation):
         self.__quotation = quotation
 
@@ -43,6 +61,9 @@ class Quote(Expression):
 
 
 class Definition(Expression):
+    """"
+    Definition expression.
+    """
     def __init__(self, identifier, value):
         self.__identifier = identifier
         self.__value = value
@@ -56,6 +77,9 @@ class Definition(Expression):
 
 
 class Assignment(Expression):
+    """"
+    Assignment expression.
+    """
     def __init__(self, identifier, value):
         self.__identifier = identifier
         self.__value = value
@@ -69,6 +93,9 @@ class Assignment(Expression):
 
 
 class If(Expression):
+    """"
+    If expression.
+    """
     def __init__(self, predicate, consequent, alternative=None):
         self.__predicate = predicate
         self.__consequent = consequent
@@ -83,10 +110,14 @@ class If(Expression):
             continuation = self.__consequent
         else:
             continuation = self.__alternative
-        return evaluate.tail_call_evaluate(continuation, env) if continuation else basictypes.Boolean(False)
+        return evaluate.tail_call_evaluate(continuation, env) if continuation else \
+            basictypes.Boolean(False)
 
 
 class Lambda(Expression):
+    """"
+    Lambda expression.
+    """
     def __init__(self, parameters, body):
         self.__parameters = parameters
         self.__body = body  # TODO: Handle internal definitions?
@@ -99,6 +130,9 @@ class Lambda(Expression):
 
 
 class Begin(Expression):
+    """"
+    Begin expression.
+    """
     def __init__(self, sequence):
         self.__sequence = sequence
 
@@ -110,6 +144,9 @@ class Begin(Expression):
 
 
 class Application(Expression):
+    """"
+    Application expression.
+    """
     def __init__(self, operator, operands):
         self.__operator = operator
         self.__operands = operands

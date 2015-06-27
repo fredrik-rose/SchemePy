@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+"""
+Scheme interpreter.
+"""
 import argparse
 import logging
 import sys
@@ -5,6 +9,9 @@ from schemepy import repl
 
 
 def main():
+    """
+    Program entry point.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--verbose", help="increase output verbosity", action="store_true")
     args = parser.parse_args()

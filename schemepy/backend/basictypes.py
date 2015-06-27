@@ -1,13 +1,25 @@
+"""
+The basic types of the language.
+"""
 import abc
 
 
 class BasicType(metaclass=abc.ABCMeta):
+    """"
+    Basic type abstract base class.
+    """
     @abc.abstractproperty
     def value(self):
+        """"
+        Get the value of the type.
+        """
         pass
 
 
 class Boolean(BasicType):
+    """"
+    Boolean basic type.
+    """
     def __init__(self, value):
         assert isinstance(value, bool)
         self.__value = value
@@ -21,6 +33,9 @@ class Boolean(BasicType):
 
 
 class Integer(BasicType):
+    """"
+    Integer basic type.
+    """
     def __init__(self, value):
         assert isinstance(value, int)
         self.__value = value
@@ -34,6 +49,9 @@ class Integer(BasicType):
 
 
 class Float(BasicType):
+    """"
+    Float basic type.
+    """
     def __init__(self, value):
         assert isinstance(value, float)
         self.__value = value
@@ -47,6 +65,9 @@ class Float(BasicType):
 
 
 class Complex(BasicType):
+    """"
+    Complex basic type.
+    """
     def __init__(self, value):
         assert isinstance(value, complex)
         self.__value = value
@@ -60,6 +81,9 @@ class Complex(BasicType):
 
 
 class Symbol(BasicType):
+    """"
+    Symbol basic type.
+    """
     def __init__(self, value):
         assert isinstance(value, str)
         self.__value = value
@@ -73,6 +97,9 @@ class Symbol(BasicType):
 
 
 class String(BasicType):
+    """"
+    String basic type.
+    """
     def __init__(self, value):
         assert isinstance(value, str)
         self.__value = value
@@ -86,6 +113,9 @@ class String(BasicType):
 
 
 class Pair(BasicType):
+    """"
+    Pair basic type.
+    """
     def __init__(self, car, cdr):
         self.__car = car
         self.__cdr = cdr
@@ -99,14 +129,23 @@ class Pair(BasicType):
 
     @property
     def car(self):
+        """
+        Get first value.
+        """
         return self.__car
 
     @property
     def cdr(self):
+        """
+        Get second value.
+        """
         return self.__cdr
 
 
 class List(BasicType, list):
+    """"
+    List basic type.
+    """
     def __str__(self):
         return "<List {}>".format([str(e) for e in self])
 

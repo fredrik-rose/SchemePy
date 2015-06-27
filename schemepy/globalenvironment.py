@@ -1,8 +1,14 @@
+"""
+The global environment, contain bindings for primitives.
+"""
 from schemepy.backend import primitives
 from schemepy import environment
 
 
 def create():
+    """
+    Creates a global environment.
+    """
     env = environment.Environment()
     env.update({
         '#t': primitives.TRUE,

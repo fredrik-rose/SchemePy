@@ -1,5 +1,5 @@
 """
-Tail call optimizer
+Tail call optimizer.
 
 Usage:
  * Decorate the function with @Trampoline
@@ -25,11 +25,17 @@ from schemepy.evalapply import thunk
 
 
 class Trampoline:
+    """
+    Trampoline decorator (tail call optimizer).
+    """
     def __init__(self, func):
         self.__func = func
 
     @property
     def func(self):
+        """
+        Get function.
+        """
         return self.__func
 
     def __call__(self, *args, **kwargs):
@@ -38,7 +44,13 @@ class Trampoline:
 
 
 def bounce(call):
+    """
+    Performs a bounce on the trampoline.
+    """
     def tail_call(*args, **kwargs):
+        """
+        Pack the tail call in a thunk to be bounced on the trampoline.
+        """
         return thunk.Thunk(func, *args, **kwargs)
 
     func = call.func if isinstance(call, Trampoline) else call  # Do not bounce a trampoline.

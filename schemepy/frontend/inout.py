@@ -1,12 +1,21 @@
+"""
+Frontend interface.
+"""
 import logging
 from schemepy.backend import procedures, basictypes
 from schemepy.frontend import analyzer, tokenizer
 
 
 def read(stream):
+    """
+    Parses a stream and creates backend objects.
+    """
     token = tokenizer.Tokenizer(stream)
 
     def read_next():
+        """
+        Get next expression.
+        """
         tokens = token.tokenize()
         logging.debug("Tokens: " + str(tokens))
         exp = analyzer.analyze(tokens)
@@ -16,6 +25,9 @@ def read(stream):
 
 
 def disp(exp):
+    """
+    Converts a backend object to a Scheme string.
+    """
     printers = {
         str: lambda: exp,
         basictypes.Boolean: lambda: "#t" if exp.value else "#f",

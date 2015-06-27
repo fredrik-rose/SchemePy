@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+"""
+Scheme interpreter setup.
+"""
 from setuptools import setup
 
 
