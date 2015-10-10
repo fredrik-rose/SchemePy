@@ -20,13 +20,16 @@ def _primitive(func):
         """
         Calls a primitive function with correct arguments.
         """
-        num_of_args = len(inspect.getargspec(func).args)
-        if num_of_args == 1:
-            return func(args)
-        elif num_of_args == 2:
-            return func(args, env)
-        else:
-            raise TypeError("Primitive function not supported")
+        try:  # TODO: Improve error handling
+            num_of_args = len(inspect.getargspec(func).args)
+            if num_of_args == 1:
+                return func(args)
+            elif num_of_args == 2:
+                return func(args, env)
+            else:
+                raise TypeError("Primitive function not supported")
+        except Exception:
+            print("Encountered an error when applying a primitive procedure.")
 
     return procedures.Primitive(argument_checker)
 
